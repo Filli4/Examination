@@ -10,7 +10,7 @@ export const getMenu = async (): Promise<(Wonton | Dip | Drink)[]> => {
     const response = await axios.get(`${API_BASE_URL}/menu`, {
       headers: { 'x-zocom': API_KEY },
     });
-    console.log("Menu fetched:", response.data);
+    
     return response.data; // Assuming the response contains the menu items in the expected format
   } catch (error) {
     console.error('Failed to fetch menu:', error);
@@ -19,33 +19,43 @@ export const getMenu = async (): Promise<(Wonton | Dip | Drink)[]> => {
 };
 
 // Function to create an order
-export const createOrder = async (tenantId: string, orderData: CartItem[]): Promise<any> => {
+export const createOrder = async (tenantId: string, orderData: { items: CartItem[]; orderValue: number }): Promise<any> => {
+  console.log("orderData:", orderData);
+  console.log("Type of orderData:", typeof orderData);
+  console.log("Is orderData an array?", Array.isArray(orderData));
+
+  // Ensure tenantId and orderData are valid
   if (!tenantId) {
     console.error("Tenant ID is required.");
     throw new Error("Tenant ID is required.");
   }
 
-  if (!orderData || orderData.length === 0) {
+  if (!orderData || !orderData.items || orderData.items.length === 0) {
     console.error("Order data is required and cannot be empty.");
     throw new Error("Order data is required and cannot be empty.");
   }
 
-  try {
-    console.log("Sending order data:", JSON.stringify(orderData, null, 2)); // Log the full order data for inspection
+  // Log the items data to check the structure
+  console.log("Sending order items:", JSON.stringify(orderData.items, null, 2)); // Inspect items array
 
+  try {
     const response = await axios.post(
-      `${API_BASE_URL}/${tenantId}/orders`, // Adjust the URL if necessary
-      { items: orderData },
+      `${API_BASE_URL}/orders`, // Removed tenantId from URL, assuming the endpoint handles tenant routing
+      { 
+        tenantId, // Include tenantId in the request body if needed
+        items: orderData.items,
+        orderValue: orderData.orderValue 
+      },
       {
         headers: {
-          'x-zocom': API_KEY, // Custom header for authorization or API key
+          'x-zocom': API_KEY,
           'Content-Type': 'application/json',
         },
       }
     );
 
     console.log("Order created successfully:", response.data);
-    return response.data; // Return the response for further use
+    return response.data;
   } catch (error: any) {
     if (error.response) {
       console.error(`Error creating order: ${error.response.status}`, error.response.data);
@@ -63,7 +73,7 @@ export const createOrder = async (tenantId: string, orderData: CartItem[]): Prom
 export const getOrders = async (tenantId: string): Promise<any> => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/${tenantId}/orders`,
+      `${API_BASE_URL}/${tenantId}/orders`, // Assuming tenantId needs to be part of the endpoint
       {
         headers: { 
           'x-zocom': API_KEY,

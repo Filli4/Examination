@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-/* import FoodTruckRegister from './components/FoodTruckRegister'; */
+
 import Screen from './Screen';
-/* import Api from './api'; */
+
+import OrderDetails from './components/OrderDetails';
+
 
 const App = () => {
   return (
@@ -10,8 +12,8 @@ const App = () => {
       <div className="app-container">
         <Routes>
           <Route path="/" element= {<Screen />}/>
-      {/*     <Route path="/FoodTruck" element={<FoodTruckRegister />} /> */}
-         {/*  <Route path="/Api" element={<Api />} /> */}
+          <Route path="/OrderDetails" element= {<OrderDetails/>}/>
+     
         </Routes>
       </div>
     </Router>

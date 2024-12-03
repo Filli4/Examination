@@ -1,53 +1,57 @@
-import React from "react";
-import { CartItem } from "../Type"; // Import CartItem type
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CartItem } from '../Type';
 
 interface CartProps {
-  cart: CartItem[]; // Array of CartItem objects
-  addToCart: (item: CartItem) => void; // Function to add item to cart
-  removeFromCart: (itemId: number) => void; // Function to remove item from cart
-  onCheckout: () => void; // Function to handle checkout
-  onBackToMenu: () => void; // Function to navigate back to the menu
+  cart: CartItem[];
+  addToCart: (item: CartItem['item']) => void;
+  removeFromCart: (itemId: number) => void;
+  onBackToMenu: () => void;
 }
 
 const Cart: React.FC<CartProps> = ({
   cart,
   addToCart,
   removeFromCart,
-  onCheckout,
   onBackToMenu,
 }) => {
-  // Calculate total price of items in the cart
+  const navigate = useNavigate(); // Initialize navigate function
+
   const total = cart.reduce(
-    (sum, item) => sum + item.item.price * item.amount, // Adjust calculation based on amount (quantity)
-    0
+    (sum, cartItem) => sum + cartItem.item.price * cartItem.amount,
+    0,
   );
 
+  const isCheckoutDisabled = cart.length === 0;
+
   return (
-    <div className="p-6 bg-gray-100 h-full">
+    <div className="p-6 bg-gray-300 h-auto">
       <h1 className="text-3xl font-bold mb-4">Your Cart</h1>
       {cart.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="flex flex-col">
           {cart.map((cartItem) => (
             <li
               key={cartItem.item.id}
-              className="p-4 bg-white rounded-lg shadow flex justify-between items-center"
+              className="py-2 border-black border-dotted border-b-[1px] border-opacity-50 flex flex-col justify-between items-center w-full"
             >
-              <div>
+              <div className="flex justify-between items-center w-full">
                 <h2 className="text-xl font-semibold">{cartItem.item.name}</h2>
-                <p className="text-gray-500">
-                  {cartItem.amount} x {cartItem.item.price} SEK
-                </p>
+                <h2>{cartItem.item.price} SEK</h2>
               </div>
-              <div className="flex space-x-2">
+
+              <div className="flex justify-start items-center w-full">
                 <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className="bg-gray-400 text-black px-2 rounded-full"
                   onClick={() => removeFromCart(cartItem.item.id)}
                 >
-                  -
+                  –
                 </button>
+                <p className="text-gray-500 mx-1">
+                  {cartItem.amount} x {cartItem.item.price} SEK
+                </p>
                 <button
-                  className="bg-green-500 text-white px-2 py-1 rounded"
-                  onClick={() => addToCart(cartItem)} // Ensure `addToCart` adds a CartItem
+                  className="bg-gray-400 text-black px-2 rounded-full"
+                  onClick={() => addToCart(cartItem.item)}
                 >
                   +
                 </button>
@@ -58,19 +62,21 @@ const Cart: React.FC<CartProps> = ({
       ) : (
         <p className="text-gray-500">Your cart is empty.</p>
       )}
-      <div className="mt-4 text-right">
-        <h2 className="text-xl font-bold">Total: {total} SEK</h2>
+      <div className="mt-4 text-right flex flex-col">
+        <h2 className="text-xl font-bold bg-zinc-400 p-4 flex justify-between rounded">
+          Total: <span>{total} SEK</span>
+        </h2>
+
         <button
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={onCheckout}
+          className={`mt-2 ${
+            isCheckoutDisabled
+              ? 'bg-gray-400 text-gray-800 cursor-not-allowed'
+              : 'bg-zinc-800 text-white opacity-95'
+          } p-4 rounded font-medium text-lg`}
+          onClick={() => navigate('/OrderDetails')} // Navigate to OrderDetails page
+          disabled={isCheckoutDisabled}
         >
-          Checkout
-        </button>
-        <button
-          className="mt-2 bg-gray-500 text-white px-4 py-2 rounded"
-          onClick={onBackToMenu}
-        >
-          Back to Menu
+          TAKE MY MONEY!
         </button>
       </div>
     </div>

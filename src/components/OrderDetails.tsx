@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getOrderDetails } from "../api"; // Replace with actual API
-import { Wonton, Dip, Drink } from "../Type"; // Import the relevant item types
+import { Wonton, Dip, Drink } from "../Type"; // Import types
 
 interface OrderDetailsProps {
-  orderId: string | null; // Ensure orderId can be null
-  onNewOrder: () => void; // Function that triggers new order creation
+  orderId: string | null;
+  onNewOrder: () => void;
 }
 
 interface OrderDetailsData {
@@ -13,18 +14,19 @@ interface OrderDetailsData {
     id: number;
     item: Wonton | Dip | Drink;
     quantity: number;
-    totalPrice?: number; // Optional total price if provided
   }>;
   orderValue: number;
   eta: string;
+  timestamp: string;
+  state: string;
 }
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId, onNewOrder }) => {
-  const [order, setOrder] = useState<OrderDetailsData | null>(null); // Typing the order state
-  const [loading, setLoading] = useState<boolean>(true); // Track loading state
-  const [error, setError] = useState<string | null>(null); // Track error state
+  const [order, setOrder] = useState<OrderDetailsData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Use navigate to redirect to the homepage
 
-  // Fetch order details on orderId change
   useEffect(() => {
     if (!orderId) {
       setError("No order ID provided.");
@@ -34,89 +36,56 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId, onNewOrder }) => {
 
     const fetchOrder = async () => {
       try {
-        setLoading(true); // Start loading
-        const details = await getOrderDetails(orderId);
-        setOrder(details); // Set the fetched order
-        setError(null); // Clear error if successful
-      } catch (error: any) {
+        setLoading(true);
+        const details = await getOrderDetails(orderId); // Assuming API response matches the structure
+        setOrder(details);
+        setError(null);
+      } catch (error) {
         console.error("Failed to fetch order details:", error);
-        setError("Failed to load order details. Please try again."); // Set error message
+        setError("Failed to load order details. Please try again.");
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
     fetchOrder();
-
   }, [orderId]);
 
+  const handleNewOrder = () => {
+    // Navigate to the homepage and trigger a new order
+    navigate("/"); // Redirect to the homepage
+    onNewOrder(); // Trigger the function passed via props to reset any necessary state
+  };
+
   return (
-    <div className="p-6 bg-gray-800 text-white h-full">
-      <h1 className="text-3xl font-bold mb-4">Din Order</h1>
+    <div className="p-6 bg-zinc-600 text-white min-h-svh">
+      <div className="flex flex-col justify-around items-center gap-8">
+        <img src="./../../assets/boxtop.png" alt="Box Top" />
 
-      {loading && (
-        <div className="text-center">
-          <div className="loader">Loading...</div> {/* You can replace this with a spinner */}
+        {loading && (
+          <div className="text-center">
+            <div className="loader">Loading...</div>
+          </div>
+        )}
+
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-white text-lg font-semibold p-4">
+            Dina BESTÄLLNING TILLAGAS!
+          </h1>
+          <p>5 Min</p>
         </div>
-      )}
 
-      {error && !loading && (
-        <div className="text-red-500 text-center mt-4">
-          <p>{error}</p>
+        <div className="flex flex-col w-full mt-4 gap-4 text-center">
+          <button className="border-[1px] text-white text-opacity-55 text-lg font-semibold p-4 rounded">
+            SE KVITTO
+          </button>
           <button
-            onClick={() => window.location.reload()} // Allow retry on error
-            className="mt-2 bg-gray-600 text-white px-4 py-2 rounded"
-          >
-            Retry
+            onClick={handleNewOrder} // Call handleNewOrder when the button is clicked
+            className="bg-zinc-800 text-white text-opacity-95 text-lg font-semibold p-4 rounded">
+            GÖR NY BESTÄLLNING
           </button>
         </div>
-      )}
-
-      {order && !loading && !error && (
-        <div>
-          <h2 className="text-lg">Order ID: {order.id}</h2>
-          <ul className="mt-4">
-            {order.items.map((item) => (
-              <li key={item.id} className="mb-2">
-                {/* Show item details */}
-                {item.quantity} x {item.item.name} -{" "}
-                {item.totalPrice ? item.totalPrice : item.item.price * item.quantity} SEK
-
-                {/* Show ingredients for Wonton items */}
-                {item.item.type === "wonton" && (
-                  <ul className="mt-2 text-gray-500">
-                    <li><strong>Ingredients:</strong></li>
-                    {item.item.ingredients?.map((ingredient, index) => (
-                      <li key={index}>{ingredient}</li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 text-lg">Total: {order.orderValue} SEK</p>
-          <p className="text-sm text-gray-400">ETA: {order.eta}</p>
-          <div className="mt-6 flex justify-between">
-            <button
-              className="bg-gray-700 text-white px-4 py-2 rounded"
-              onClick={() => console.log("Show Receipt")}
-            >
-              SE KVITTO
-            </button>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded"
-              onClick={onNewOrder}
-            >
-              NY BESTÄLLNING
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Fallback UI for no order */}
-      {!order && !loading && !error && (
-        <p className="text-center text-gray-400">No order found.</p>
-      )}
+      </div>
     </div>
   );
 };
