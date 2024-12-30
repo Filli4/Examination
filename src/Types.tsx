@@ -4,26 +4,26 @@ export enum OrderType {
   Drink = "drink",
 }
 
-//types till mina objekt i wonton menyn
+//types for the wonton items
 export type MenuItems = {
   id: number;
-  type: string;
+  type: OrderType.Wonton;
   name: string;
   description: string;
   price: number;
   ingredients: string[];
 };
 
-//types till mina objekt i dipsås menyn
+//types for the dip items
 export type Dip = {
   id: number;
-  type: string;
+  type: OrderType.Dip;
   name: string;
   description: string;
   price: number;
 };
 
-//types till mina objekt i drick menyn
+//types for the drinks items
 export type Drink = {
   id: number;
   type: OrderType.Drink;
@@ -32,36 +32,21 @@ export type Drink = {
   price: number;
 };
 
-export enum OrderState {
-  Waiting = "waiting",
-  Processing = "processing",
-  Done = "done",
-}
 
+//types for the orders
 export type Order = {
   id: string;
   items: string[];
   orderValue: number;
   eta: number;
   timestamp: number;
-  state: OrderState;
+ 
 };
 
-//types till mina objekt i varukorgen
+//types for the cart items
 export type CartItems = {
   id: number;
   name: string;
   price: number;
   quantity: number;
-};
-
-export type Receipt = {
-  id: string;
-  orderValue: number;
-  timestamp: string;
-  items: CartItems[];
-};
-
-export type OrderBody = {
-  items: number[]; //
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DrinkData } from "../Api/drinkApi";
+import { DrinkData } from "../Api/DrinkApi";
 import {CartItems, Drink } from "../Types";
 type DrinkProps = {
     addToCart: (items: CartItems) => void;
@@ -31,11 +31,10 @@ type DrinkProps = {
             <div
               key={drink.id}
               onMouseDown={() => {
-                setSelectedDrink(drink.id); // Sätt till vald dipsås när musen trycks ner
-                handleDrinkClick(drink); // Lägg till i varukorgen
+                setSelectedDrink(drink.id);
+                handleDrinkClick(drink); 
               }}
-              onMouseUp={() => setSelectedDrink(null)} // Återställ när musen släpps
-              onMouseLeave={() => setSelectedDrink(null)} // Återställ när musen lämnar elementet
+              
               className={`p-2 my-2 text-center rounded cursor-pointer flex items-center justify-center hover:bg-zinc-700 ${
                 selectedDrink === drink.id ? "bg-[#353131]" : "bg-[#F1F0EC3D]"
               }`}

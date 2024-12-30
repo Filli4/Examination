@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DipData } from "../Api/Dipapi";
+import { DipData } from "../Api/DipApi";
 import { Dip, CartItems } from "../Types";
 
 type DipCardProps = {
@@ -32,11 +32,10 @@ export default function DipCard({ addToCart }: DipCardProps) {
           <div
             key={dip.id}
             onMouseDown={() => {
-              setSelectedDip(dip.id); // Sätt till vald dipsås när musen trycks ner
-              handleDipClick(dip); // Lägg till i varukorgen
+              setSelectedDip(dip.id); 
+              handleDipClick(dip); 
             }}
-            onMouseUp={() => setSelectedDip(null)} // Återställ när musen släpps
-            onMouseLeave={() => setSelectedDip(null)} // Återställ när musen lämnar elementet
+           
             className={`p-2 my-2 text-center rounded cursor-pointer flex items-center justify-center hover:bg-zinc-700 ${
               selectedDip === dip.id ? "bg-[#353131]" : "bg-[#F1F0EC3D]"
             }`}

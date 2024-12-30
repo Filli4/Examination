@@ -9,7 +9,7 @@ type WontonCardProps = {
 
 export default function WontonCard({ addToCart }: WontonCardProps) {
   const { wontons } = WontonData();
-  const [selectedItem, setSelectedItem] = useState<number | null>(null); // Uppdatera till selectedItem
+  const [selectedItem, setSelectedItem] = useState<number | null>(null); 
 
   const handleItemClick = (
     event: React.MouseEvent<HTMLLIElement>,
@@ -40,11 +40,16 @@ export default function WontonCard({ addToCart }: WontonCardProps) {
           >
             <li
               key={wonton.id}
-              className={`p-4 flex text-[#F4F3F1F0] cursor-pointer hover:bg-zinc-700 ${
+              className={`p-4 flex text-[#F4F3F1F0] cursor-pointer hover:bg-zinc-700
+               
+                ${
                 selectedItem === wonton.id ? "bg-[#353131]" : "bg-[#605858]"
               } ${index === 0 ? "rounded-t-lg" : ""} ${
                 index === wontons.length - 1 ? "rounded-b-lg" : ""
-              }`}
+              }`
+            
+              
+            }
               onClick={(event) => handleItemClick(event, wonton.id)}
             >
               <div className=" w-full ">

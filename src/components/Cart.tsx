@@ -1,4 +1,4 @@
-"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { CartItems } from "../Types";
 import ETAcard from "./ETAcard";
